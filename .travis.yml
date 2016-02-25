@@ -1,2 +1,4 @@
 language: csharp
 solution: TidalDownloader.sln
+script:
+  - xbuild /p:Configuration=Debug TidalDownloader.sln
