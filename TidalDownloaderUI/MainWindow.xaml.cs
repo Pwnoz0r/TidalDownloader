@@ -109,11 +109,12 @@ namespace TidalDownloaderUI
         {
             Configuration = new Configuration();
 
-            TextBoxEmail.Text = Configuration.ConfigData.Login.TidalUserName;
-            TextBoxPassword.Password = Configuration.HashUtility.DecryptHash(Configuration.ConfigData.Login.TidalPassword);
-
             if (!string.IsNullOrEmpty(Configuration.ConfigData.Login.TidalUserName) && !string.IsNullOrEmpty(Configuration.ConfigData.Login.TidalPassword))
+            {
+                TextBoxEmail.Text = Configuration.ConfigData.Login.TidalUserName;
+                TextBoxPassword.Password = Configuration.HashUtility.DecryptHash(Configuration.ConfigData.Login.TidalPassword);
                 InitTidalLib();
+            }
             else
                 DataGridTopAlbums.Visibility = Visibility.Hidden;
 

@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Weavers>
+  <Costura IncludeDebugSymbols='false'>
+    <IncludeAssemblies>
+      MahApps.Metro
+      MaterialDesignColors
+      MaterialDesignThemes.MahApps
+      MaterialDesignThemes.Wpf
+      Microsoft.Extensions.Configuration.Abstractions
+      Microsoft.Extensions.Configuration.Binder
+      Microsoft.Extensions.Configuration
+      Microsoft.Extensions.Configuration.FileExtensions
+      Microsoft.Extensions.Configuration.Json
+      Microsoft.Extensions.Primitives
+      Newtonsoft.Json
+      System.Windows.Interactivity
+      TidalSharp
+    </IncludeAssemblies>
+  </Costura>
+</Weavers>
