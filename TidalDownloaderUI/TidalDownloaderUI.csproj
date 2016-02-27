@@ -163,8 +163,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Enums\AvailableThemeColors.cs" />
-    <Compile Include="Enums\AvailableThemeStyles.cs" />
+    <Compile Include="Enums\AvailablePrimaryColors.cs" />
     <Compile Include="Enums\EnumUtils.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>

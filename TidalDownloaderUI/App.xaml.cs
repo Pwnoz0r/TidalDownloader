@@ -1,5 +1,4 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using MahApps.Metro;
 
 namespace TidalDownloaderUI
@@ -11,8 +10,8 @@ namespace TidalDownloaderUI
     {
         protected override void OnStartup(StartupEventArgs e)
         {
-            var theme = ThemeManager.DetectAppStyle(Current);
-            ThemeManager.ChangeAppStyle(Current, ThemeManager.GetAccent("Orange"), ThemeManager.GetAppTheme("BaseDark"));
+            //ThemeManager.DetectAppStyle(Current);
+            //ThemeManager.ChangeAppStyle(Current, ThemeManager.GetAccent("Orange"), ThemeManager.GetAppTheme("BaseDark"));
             base.OnStartup(e);
         }
     }

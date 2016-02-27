@@ -15,7 +15,7 @@
         Initialized="WindowTidalDownloader_Initialized"
         FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto" WindowStartupLocation="CenterScreen">
     <Grid>
-        <TabControl Panel.ZIndex="-1">
+        <TabControl Panel.ZIndex="-1" x:Name="TabControlDownloader">
             <TabItem Header="Home" controls:ControlsHelper.ContentCharacterCasing="Upper">
                 <Grid>
                     <DataGrid x:Name="DataGridTopAlbums" SelectionMode="Single" IsReadOnly="True" Margin="0,10,0,0" Width="Auto"  AutoGenerateColumns="True" MouseDoubleClick="DataGridTopAlbums_MouseDoubleClick"/>
@@ -33,10 +33,10 @@
                     </GroupBox>
                     <GroupBox x:Name="GroupBoxThemeOptions" Header="Theme Options" HorizontalAlignment="Left" Margin="10,140,0,118" Width="275">
                         <Grid>
-                            <Label Content="Theme Selection" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0"/>
-                            <ComboBox x:Name="ComboBoxThemeSelection" HorizontalAlignment="Right" VerticalAlignment="Top" Width="120" Margin="0,10,10,0" SelectionChanged="AvailableThemes_SelectionChanged"/>
-                            <Label Content="Theme Style" HorizontalAlignment="Left" Margin="10,0,0,10" VerticalAlignment="Bottom" d:LayoutOverrides="VerticalAlignment"/>
-                            <ComboBox x:Name="ComboBoxThemeStyle" HorizontalAlignment="Right" Width="120" Margin="0,0,10,10" VerticalAlignment="Bottom" SelectionChanged="AvailableThemes_SelectionChanged"/>
+                            <Label Content="Theme Style" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+                            <ComboBox x:Name="ComboBoxThemeStyle" Margin="89,10,54,0" VerticalAlignment="Top" SelectionChanged="AvailableThemes_SelectionChanged"/>
+                            <Label Content="Dark Theme" HorizontalAlignment="Left" Margin="10,0,0,10" VerticalAlignment="Bottom"/>
+                            <CheckBox x:Name="CheckBoxIsDark" HorizontalAlignment="Left" Margin="89,0,0,14" VerticalAlignment="Bottom" Checked="CheckBoxIsDark_Checked" Unchecked="CheckBoxIsDark_Checked"/>
                         </Grid>
                     </GroupBox>
 

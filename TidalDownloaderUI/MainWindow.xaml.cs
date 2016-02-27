@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
@@ -15,6 +14,7 @@ using TidalSharp.Controllers;
 using TidalSharp.Models;
 using Configuration = TidalDownloaderUI.Utils.Configuration;
 using MahApps.Metro.Controls.Dialogs;
+using MaterialDesignThemes.Wpf;
 using TidalSharp.Models.Static;
 // ReSharper disable UnusedVariable
 
@@ -31,10 +31,11 @@ namespace TidalDownloaderUI
             InitializeComponent();
         }
 
-        public void ChangeAppStyle(AvailableThemeColors colors, AvailableThemeStyles styles)
+        public void ChangeAppStyle(AvailablePrimaryColors primaryColor, bool isDark)
         {
-            ThemeManager.DetectAppStyle(this);
-            //ThemeManager.ChangeAppStyle(this, ThemeManager.GetAccent(colors.ToString()), ThemeManager.GetAppTheme(styles.ToString()));
+            var paletteHelper = new PaletteHelper();
+            paletteHelper.ReplacePrimaryColor(primaryColor.ToString());
+            paletteHelper.SetLightDark(isDark);
         }
 
         private TidalController TidalController { get; set; }
@@ -80,7 +81,6 @@ namespace TidalDownloaderUI
             using (var albumDownloadProcess = new Process())
             {
                 albumDownloadProcess.ErrorDataReceived += AlbumDownloadProcess_ErrorDataReceived;
-                //albumDownloadProcess.Exited += (sender, e) => _processList.Remove(sender as Process);
                 albumDownloadProcess.EnableRaisingEvents = true;
 
                 albumDownloadProcess.StartInfo = new ProcessStartInfo
@@ -112,24 +112,24 @@ namespace TidalDownloaderUI
             if (!string.IsNullOrEmpty(Configuration.ConfigData.Login.TidalUserName) && !string.IsNullOrEmpty(Configuration.ConfigData.Login.TidalPassword))
             {
                 TextBoxEmail.Text = Configuration.ConfigData.Login.TidalUserName;
-                TextBoxPassword.Password = Configuration.HashUtility.DecryptHash(Configuration.ConfigData.Login.TidalPassword);
+                TextBoxPassword.Password =
+                    Configuration.HashUtility.DecryptHash(Configuration.ConfigData.Login.TidalPassword);
                 InitTidalLib();
             }
             else
+            {
                 DataGridTopAlbums.Visibility = Visibility.Hidden;
+                TabControlDownloader.SelectedIndex = 1;
+            }
+            
+            ComboBoxThemeStyle.ItemsSource = Enum.GetValues(typeof(AvailablePrimaryColors));
+            CheckBoxIsDark.IsChecked = Configuration.ConfigData.Theme.IsDark;
 
-            ComboBoxThemeSelection.ItemsSource = Enum.GetValues(typeof(AvailableThemeColors));
-            ComboBoxThemeStyle.ItemsSource = Enum.GetValues(typeof(AvailableThemeStyles));
+            var configThemePrimaryColor = Configuration.ConfigData.Theme.ThemePrimaryColor;
+            var isDark = Configuration.ConfigData.Theme.IsDark;
 
-            var configThemeColor = Configuration.ConfigData.Theme.ThemeColor;
-            var configThemeStyle = Configuration.ConfigData.Theme.ThemeStyle;
-
-            ChangeAppStyle(configThemeColor, configThemeStyle);
-
-            ComboBoxThemeSelection.Text = ThemeManager.GetAccent(configThemeColor.ToString()).Name;
-            ComboBoxThemeStyle.Text = ThemeManager.GetAppTheme(configThemeStyle.ToString()).Name;
-
-            GroupBoxThemeOptions.Visibility = Visibility.Hidden;
+            ChangeAppStyle(configThemePrimaryColor, isDark);
+            ComboBoxThemeStyle.Text = configThemePrimaryColor.ToString();
 
             Configuration.ConfigData.Lib.LibDirectory = GetLibDirectory();
             TextBoxLibDir.Text = Configuration.ConfigData.Lib.LibDirectory;
@@ -241,15 +241,18 @@ namespace TidalDownloaderUI
         private void AvailableThemes_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (_isInitialized)
-                ChangeAppStyle(EnumUtils.Parse<AvailableThemeColors>(ComboBoxThemeSelection.SelectedItem.ToString()), EnumUtils.Parse<AvailableThemeStyles>(ComboBoxThemeStyle.SelectedItem.ToString()));
+                ChangeAppStyle(EnumUtils.Parse<AvailablePrimaryColors>(ComboBoxThemeStyle.SelectedItem.ToString()), true);
         }
 
         private void ButtonSaveSettings_Click(object sender, RoutedEventArgs e)
         {
             Configuration.ConfigData.Login.TidalUserName = TextBoxEmail.Text;
             Configuration.ConfigData.Login.TidalPassword = string.IsNullOrEmpty(TextBoxPassword.Password) ? string.Empty : Configuration.HashUtility.CreateHash(TextBoxPassword.Password);
-            Configuration.ConfigData.Theme.ThemeColor = EnumUtils.Parse<AvailableThemeColors>(ComboBoxThemeSelection.Text);
-            Configuration.ConfigData.Theme.ThemeStyle = EnumUtils.Parse<AvailableThemeStyles>(ComboBoxThemeStyle.Text);
+
+            Configuration.ConfigData.Theme.ThemePrimaryColor = EnumUtils.Parse<AvailablePrimaryColors>(ComboBoxThemeStyle.Text);
+
+            if (CheckBoxIsDark.IsChecked != null)
+                Configuration.ConfigData.Theme.IsDark = CheckBoxIsDark.IsChecked.Value;
 
             GetLibDirectory();
             Configuration.ConfigData.Lib.LibDirectory = TextBoxLibDir.Text;
@@ -257,6 +260,14 @@ namespace TidalDownloaderUI
             Configuration.ConfigData.Downloads.DownloadLimit = int.Parse(TextBoxConcurrentDownloads.Text);
 
             Configuration.SaveConfig();
+        }
+
+        private void CheckBoxIsDark_Checked(object sender, RoutedEventArgs e)
+        {
+            if (!CheckBoxIsDark.IsChecked.HasValue || string.IsNullOrEmpty(ComboBoxThemeStyle.Text)) return;
+            
+            Configuration.ConfigData.Theme.IsDark = CheckBoxIsDark.IsChecked.Value;
+            ChangeAppStyle(EnumUtils.Parse<AvailablePrimaryColors>(ComboBoxThemeStyle.Text), Configuration.ConfigData.Theme.IsDark);
         }
     }
 }

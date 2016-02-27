@@ -15,8 +15,8 @@ namespace TidalDownloaderUI.Utils.Models
 
         public ThemeSettings Theme { get; set; } = new ThemeSettings
         {
-            ThemeColor = AvailableThemeColors.Orange,
-            ThemeStyle = AvailableThemeStyles.BaseDark
+            ThemePrimaryColor = AvailablePrimaryColors.DeepOrange,
+            IsDark = true
         };
 
         public LibSettings Lib { get; set; } = new LibSettings();
@@ -35,8 +35,8 @@ namespace TidalDownloaderUI.Utils.Models
 
         public class ThemeSettings
         {
-            public AvailableThemeColors ThemeColor { get; set; }
-            public AvailableThemeStyles ThemeStyle { get; set; }
+            public AvailablePrimaryColors ThemePrimaryColor { get; set; }
+            public bool IsDark { get; set; }
         }
 
         public class LibSettings
