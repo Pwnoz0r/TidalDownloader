@@ -112,8 +112,7 @@ namespace TidalDownloaderUI
             if (!string.IsNullOrEmpty(Configuration.ConfigData.Login.TidalUserName) && !string.IsNullOrEmpty(Configuration.ConfigData.Login.TidalPassword))
             {
                 TextBoxEmail.Text = Configuration.ConfigData.Login.TidalUserName;
-                TextBoxPassword.Password =
-                    Configuration.HashUtility.DecryptHash(Configuration.ConfigData.Login.TidalPassword);
+                TextBoxPassword.Password = Configuration.HashUtility.DecryptHash(Configuration.ConfigData.Login.TidalPassword);
                 InitTidalLib();
             }
             else
@@ -165,18 +164,23 @@ namespace TidalDownloaderUI
 
             if (downloadResult != MessageDialogResult.Affirmative) return;
 
-            TidalController.ApiRequest<AlbumsModel>($"/albums/{tempAlbum.Id}/tracks?sessionId={TidalController.Tidal.LoginModel.SessionId}&countryCode={TidalController.Tidal.CountryModel.CountryCode}");
+            TidalController.ApiRequest<AlbumTracksModel>($"/albums/{tempAlbum.Id}/tracks?sessionId={TidalController.Tidal.LoginModel.SessionId}&countryCode={TidalController.Tidal.CountryModel.CountryCode}");
 
             Console.WriteLine($"Downloading Album: {tempAlbum.Title}({tempAlbum.Id}) by {tempAlbum.Artist} [{tempAlbum.NumberOfTracks} tracks]");
 
             var trackItems = new List<TracksModel>();
 
-            foreach (var item in TidalController.Tidal.AlbumsModel.Items)
+            foreach (var item in TidalController.Tidal.AlbumTracksModel.Items)
             {
                 Console.WriteLine($"Getting information for: {item.Title}({item.Id})");
-                TidalController.ApiRequest<TracksModel>($"/tracks/{item.Id}/streamUrl?soundQuality={TidalController.Tidal.UsersSubscriptionsModel.HighestSoundQuality}&sessionId={TidalController.Tidal.LoginModel.SessionId}&countryCode={TidalController.Tidal.CountryModel.CountryCode}");
 
-                trackItems.Add(TidalController.Tidal.TracksModel);
+                if (!item.AllowStreaming)
+                    Console.WriteLine($"Ignored track: {item.Title} ({item.Id}) as it is not allowed to stream.");
+                else
+                {
+                    TidalController.ApiRequest<TracksModel>($"/tracks/{item.Id}/streamUrl?soundQuality={TidalController.Tidal.UsersSubscriptionsModel.HighestSoundQuality}&sessionId={TidalController.Tidal.LoginModel.SessionId}&countryCode={TidalController.Tidal.CountryModel.CountryCode}");
+                    trackItems.Add(TidalController.Tidal.TracksModel);
+                }
             }
 
             var albumCoverUrl = "";
@@ -190,7 +194,7 @@ namespace TidalDownloaderUI
             {
                 Parallel.ForEach(trackItems, pOptions, trackItem =>
                 {
-                    var track = TidalController.Tidal.AlbumsModel.Items.First(t => t.Id == trackItem.TrackId);
+                    var track = TidalController.Tidal.AlbumTracksModel.Items.First(t => t.Id == trackItem.TrackId);
                     var urlRaw = trackItem.Url.Split(':');
                     var formattedNumber = track.TrackNumber < 10 ? $"0{track.TrackNumber}" : track.TrackNumber.ToString();
                     var dDir = $"{Configuration.ConfigData.Downloads.DownloadDirectory}\\{track.Artist.Name}\\{track.Album.Title}\\{formattedNumber}. {track.Title}.mp3";
